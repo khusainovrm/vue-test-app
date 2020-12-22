@@ -78,7 +78,6 @@
                         <li
                           v-for="(item, index) of selectedEducation"
                           :key="index"
-                          :ref="'education' + index"
                           class="border border-third-500 rounded-special50 m-0.5 first:mx-0 px-3 py-2 flex flex items-center"
                         >
                           <div class="font-medium text-xs">{{ item }}</div>
@@ -121,6 +120,7 @@
                 </div>
               </div>
             </div>
+
             <div class="w-full md:w-1/3 mb-1.3 md:mb-0">
               <toggle-check-box
                 :isReadyToTransfer="isReadyToTransfer"
@@ -129,47 +129,10 @@
             </div>
           </div>
 
-          <div class="row w-full px-7 hidden md:block mb-1.3">
-            <transition name="fade">
-              <div
-                v-if="errors.length"
-                class="errors flex text-second-500 mt-3 text-xxs flex items-center"
-              >
-                <img
-                  src="@/assets/svgs/attention.svg"
-                  alt="#"
-                  class="mr-1 h-3.5 w-3.5"
-                />
-                Необходимо ввести ФИО
-              </div>
-            </transition>
-          </div>
+          <Errors :errors="errors" />
 
           <div class="row flex flex-wrap px-5 md:px-7 mb-1.3">
-            <div
-              class="sex flex cursor-pointer mr-7 w-full md:w-auto mb-1.3 md:mb-0"
-            >
-              <div
-                class="border border-iron-500 border-l-1 border-t-1 border-b-1 rounded-l-special50 py-2 px-4 font-medium text-xs"
-                :class="{
-                  'text-main-500': sex !== 'male',
-                  'bg-light-gray': sex === 'male',
-                }"
-                @click="setSex('male')"
-              >
-                Мужчина
-              </div>
-              <div
-                class="border border-iron-500 border-r-1 border-t-1 border-b-1 rounded-r-special50 py-2 px-4 font-medium text-xs"
-                :class="{
-                  'text-main-500': sex !== 'female',
-                  'bg-light-gray': sex === 'female',
-                }"
-                @click="setSex('female')"
-              >
-                Женщина
-              </div>
-            </div>
+            <SexToggler :sex="sex" @setSex="setSex" />
 
             <div class="flex mr-7 w-full md:w-auto mb-1.3 md:mb-0">
               <div class="self-center flex">
@@ -219,17 +182,9 @@
             </button>
           </div>
         </div>
+
         <transition name="fade">
-          <div v-if="showModal" class="px-5 md:px-7 mb-4 md:mb-0">
-            <div
-              class="modal-container bg-granny-apple w-full md:w-max px-9 py-1.3 rounded-md shadow-special"
-            >
-              <div class="flex">
-                <img src="@/assets/svgs/green-flag.svg" alt="#" class="mr-3" />
-                <div class="text-small">Данные успешно сохранены</div>
-              </div>
-            </div>
-          </div>
+          <Toast :showModal="showModal" />
         </transition>
       </div>
 
@@ -258,10 +213,13 @@
 
 <script>
 import ToggleCheckBox from '@/components/toggleCheckBox'
+import Errors from '@/components/errors'
+import Toast from '@/components/toast'
+import SexToggler from '@/components/sexToggler'
 
 export default {
   name: 'App',
-  components: { ToggleCheckBox },
+  components: { SexToggler, Toast, Errors, ToggleCheckBox },
   data: () => ({
     fio: '',
     errors: [],
@@ -280,12 +238,15 @@ export default {
     ],
     selectedEducation: [],
   }),
+
   created() {
     document.addEventListener('click', this.optionsWindowHandler)
   },
+
   unmounted() {
     document.removeEventListener('click', this.optionsWindowHandler)
   },
+
   computed: {
     isDisabled() {
       return !(
@@ -299,6 +260,7 @@ export default {
       )
     },
   },
+
   methods: {
     setSex(sex) {
       this.sex = sex
@@ -323,7 +285,6 @@ export default {
         setTimeout(() => (this.showModal = false), 3000)
       }
     },
-
     resetFio() {
       this.fio = ''
     },
@@ -347,6 +308,7 @@ export default {
       this.isSexChosen = false
     },
   },
+
   watch: {
     fio() {
       this.errors = []

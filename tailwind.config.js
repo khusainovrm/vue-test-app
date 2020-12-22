@@ -9,6 +9,9 @@ module.exports = {
       padding: {
         1.3: '1.375rem', //22px
       },
+      margin: {
+        1.3: '1.375rem', //22px
+      },
       fontFamily: {
         sans: ['Fira Sans', ...fontFamily.sans],
         heading: ['"Cambria"'],
@@ -73,7 +76,7 @@ module.exports = {
           800: '#555e70',
           900: '#464c5c',
         },
-        // gray fro border
+        // gray for border
         iron: {
           50: '#fdfdfd',
           100: '#fbfbfc',

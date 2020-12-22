@@ -23,7 +23,7 @@
                     v-model="fio"
                     type="text"
                     placeholder="Введите ФИО"
-                    class="focus:outline-none flex-grow text-base"
+                    class="focus:outline-none flex-grow text-base placeholder-third-500 self-end pb-2"
                     @keydown.enter="$refs.inputFio.blur()"
                   />
                   <div
@@ -35,7 +35,7 @@
                   </div>
                 </div>
 
-                <transition name="error">
+                <transition name="fade">
                   <div
                     v-if="errors.length"
                     class="errors flex md:hidden text-second-500 mt-3 text-xxs flex items-center"
@@ -59,7 +59,7 @@
                 <div
                   class="input-wrapper flex border-third-500 border-b"
                   ref="educationDiv"
-                  @click="showOptionsWindow = !showOptionsWindow"
+                  @click.self="showOptionsWindow = !showOptionsWindow"
                 >
                   <div
                     id="education"
@@ -69,6 +69,7 @@
                     <span
                       v-if="!selectedEducation.length"
                       class="text-third-500 text-base"
+                      @click.self="showOptionsWindow = !showOptionsWindow"
                       >Выберите образование</span
                     >
 
@@ -77,6 +78,7 @@
                         <li
                           v-for="(item, index) of selectedEducation"
                           :key="index"
+                          :ref="'education' + index"
                           class="border border-third-500 rounded-special50 m-0.5 first:mx-0 px-3 py-2 flex flex items-center"
                         >
                           <div class="font-medium text-xs">{{ item }}</div>
@@ -119,7 +121,7 @@
                 </div>
               </div>
             </div>
-            <div class="w-full md:w-1/3">
+            <div class="w-full md:w-1/3 mb-1.3 md:mb-0">
               <toggle-check-box
                 :isReadyToTransfer="isReadyToTransfer"
                 @checked="isReadyToTransfer = !isReadyToTransfer"
@@ -127,7 +129,7 @@
             </div>
           </div>
 
-          <div class="row w-full px-7 hidden md:block mb-7">
+          <div class="row w-full px-7 hidden md:block mb-1.3">
             <transition name="fade">
               <div
                 v-if="errors.length"
@@ -143,9 +145,9 @@
             </transition>
           </div>
 
-          <div class="row flex flex-wrap px-5 md:px-7 mb-7">
+          <div class="row flex flex-wrap px-5 md:px-7 mb-1.3">
             <div
-              class="sex flex cursor-pointer mr-7 w-full md:w-auto mb-7 md:mb-0"
+              class="sex flex cursor-pointer mr-7 w-full md:w-auto mb-1.3 md:mb-0"
             >
               <div
                 class="border border-iron-500 border-l-1 border-t-1 border-b-1 rounded-l-special50 py-2 px-4 font-medium text-xs"
@@ -169,7 +171,7 @@
               </div>
             </div>
 
-            <div class="flex mr-7 w-full md:w-auto mb-7 md:mb-0">
+            <div class="flex mr-7 w-full md:w-auto mb-1.3 md:mb-0">
               <div class="self-center flex">
                 <input
                   type="checkbox"
@@ -197,7 +199,7 @@
           </div>
 
           <div
-            class="row hidden md:flex px-5 md:px-7 mb-7"
+            class="row hidden md:flex px-5 md:px-7 mb-1.3"
             :class="{ 'opacity-50': isDisabled }"
           >
             <button
@@ -314,11 +316,14 @@ export default {
     formHandler(e) {
       e.preventDefault()
       this.errors = []
-      !this.fio
-        ? this.errors.push('Необходимо ввести ФИО')
-        : ((this.showModal = true),
-          setTimeout(() => (this.showModal = false), 3000))
+      if (!this.fio) {
+        this.errors.push('Необходимо ввести ФИО')
+      } else {
+        this.showModal = true
+        setTimeout(() => (this.showModal = false), 3000)
+      }
     },
+
     resetFio() {
       this.fio = ''
     },
@@ -385,16 +390,6 @@ export default {
 
 .fade-enter-from,
 .fade-leave-to {
-  opacity: 0;
-}
-
-.error-enter-active,
-.error-leave-active {
-  transition: opacity 0.5s ease;
-}
-
-.error-enter-from,
-.error-leave-to {
   opacity: 0;
 }
 </style>

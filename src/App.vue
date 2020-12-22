@@ -1,6 +1,6 @@
 <template>
   <div class="max-w-screen-2xl mx-auto" ref="app">
-    <form class="flex flex-col min-h-screen">
+    <form @submit.prevent="formHandler" class="flex flex-col min-h-screen">
       <div class="mobile-container flex-grow flex flex-col">
         <div class="content-wrapper md:flex-none flex-1">
           <div class="row flex flex-wrap px-5 md:px-7 mt-10">
@@ -188,25 +188,11 @@
         </transition>
       </div>
 
-      <div
-        class="flex md:hidden h-9 border-t border-iron-500"
-        :class="{ 'opacity-50': isDisabled }"
-      >
-        <button
-          :disabled="isDisabled"
-          @click="resetForm"
-          class="w-1/2 focus:outline-none border-r border-iron-500 active:bg-third-100 text-base font-medium duration-200 select-none"
-        >
-          Отменить
-        </button>
-        <button
-          :disabled="isDisabled"
-          @click="formHandler"
-          class="w-1/2 focus:outline-none text-base text-white font-medium bg-main-500 hover:bg-main-600 active:bg-main-700 duration-200 select-none"
-        >
-          Сохрандить
-        </button>
-      </div>
+      <BottomButtons
+        :isDisabled="isDisabled"
+        @resetForm="resetForm"
+        @formHandler="formHandler"
+      />
     </form>
   </div>
 </template>
@@ -216,10 +202,11 @@ import ToggleCheckBox from '@/components/toggleCheckBox'
 import Errors from '@/components/errors'
 import Toast from '@/components/toast'
 import SexToggler from '@/components/sexToggler'
+import BottomButtons from '@/components/bottomButtons'
 
 export default {
   name: 'App',
-  components: { SexToggler, Toast, Errors, ToggleCheckBox },
+  components: { BottomButtons, SexToggler, Toast, Errors, ToggleCheckBox },
   data: () => ({
     fio: '',
     errors: [],
@@ -275,8 +262,7 @@ export default {
         }
       }
     },
-    formHandler(e) {
-      e.preventDefault()
+    formHandler() {
       this.errors = []
       if (!this.fio) {
         this.errors.push('Необходимо ввести ФИО')
@@ -296,8 +282,7 @@ export default {
     removeSelected(index) {
       return this.selectedEducation.splice(index, 1)
     },
-    resetForm(e) {
-      e.preventDefault()
+    resetForm() {
       this.isReadyToWorkFullDay = false
       this.isRemoteWork = false
       this.fio = ''

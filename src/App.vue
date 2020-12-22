@@ -23,7 +23,7 @@
                     v-model="fio"
                     type="text"
                     placeholder="Введите ФИО"
-                    class="focus:outline-none flex-grow text-base placeholder-third-500 self-end pb-2"
+                    class="focus:outline-none flex-grow text-base placeholder-third-500 self-end pb-2 min-h-39"
                     @keydown.enter="$refs.inputFio.blur()"
                   />
                   <div

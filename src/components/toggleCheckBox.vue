@@ -1,6 +1,6 @@
 <template>
   <div class="flex h-full">
-    <div class="self-end flex items-center mb-2">
+    <div class="self-end flex">
       <label class="checkbox-ios">
         <input
           type="checkbox"
@@ -80,11 +80,5 @@ export default {
 }
 .checkbox-ios input[type='checkbox']:checked + .checkbox-ios-switch:before {
   transform: translateX(18px);
-}
-
-/* Hover */
-.checkbox-ios input[type='checkbox']:not(:disabled) + .checkbox-ios-switch {
-  cursor: pointer;
-  //border-color: rgba(0, 0, 0, 0.3);
 }
 </style>

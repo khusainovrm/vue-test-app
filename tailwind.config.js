@@ -22,6 +22,9 @@ module.exports = {
       // => @media (min-width: 1536px) { ... }
     },
     extend: {
+      padding: {
+        1.3: '1.375rem', //22px
+      },
       fontFamily: {
         sans: ['Fira Sans', ...fontFamily.sans],
         heading: ['"Cambria"'],
@@ -41,11 +44,12 @@ module.exports = {
         basexl: ['15px', '28.5px'],
       },
       minHeight: {
-        43: '43px',
+        39: '39px',
       },
       colors: {
         'light-blue': '#E1EDFF',
         'light-gray': '#F5F7FA',
+        'granny-apple': '#d0f4e3',
         // blue
         main: {
           50: '#f2f7ff',

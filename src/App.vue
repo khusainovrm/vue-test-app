@@ -2,14 +2,20 @@
   <div class="max-w-screen-2xl mx-auto" ref="app">
     <form class="flex flex-col min-h-screen">
       <div class="mobile-container flex-grow">
-        <div class="row flex flex-wrap px-7 mt-10 mb-7">
+        <div class="row flex flex-wrap px-5 md:px-7 mt-10">
           <div class="w-full md:w-1/3">
-            <div class="input-container">
+            <div class="flex flex-col h-full input-container">
               <label for="fio"
                 ><span class="text-third-500 text-xs">ФИО</span
                 ><span class="text-second-500">*</span></label
               >
-              <div class="input-wrapper flex border-third-500 border-b h-10">
+              <div
+                class="input-wrapper flex flex-1 border-b h-10"
+                :class="{
+                  'border-second-500': errors.length,
+                  'border-third-500': !errors.length,
+                }"
+              >
                 <input
                   id="fio"
                   ref="inputFio"
@@ -17,6 +23,7 @@
                   type="text"
                   placeholder="Введите ФИО"
                   class="focus:outline-none flex-grow text-base"
+                  @keydown.enter="$refs.inputFio.blur()"
                 />
                 <div
                   v-if="fio"
@@ -27,19 +34,22 @@
                 </div>
               </div>
 
-              <div
-                v-if="errors.length"
-                class="errors flex text-second-500 mt-3 text-xxs flex items-center"
-              >
-                <img
-                  src="@/assets/svgs/attention.svg"
-                  alt="#"
-                  class="mr-1 h-3.5 w-3.5"
-                />
-                Необходимо ввести ФИО
-              </div>
+              <transition name="error">
+                <div
+                  v-if="errors.length"
+                  class="errors flex md:hidden text-second-500 mt-3 text-xxs flex items-center"
+                >
+                  <img
+                    src="@/assets/svgs/attention.svg"
+                    alt="#"
+                    class="mr-1 h-3.5 w-3.5"
+                  />
+                  Необходимо ввести ФИО
+                </div>
+              </transition>
             </div>
           </div>
+
           <div class="w-full md:w-1/3 md:px-7 my-7 md:m-0">
             <div class="input-container">
               <label for="education" class="text-third-500 text-xs"
@@ -48,24 +58,25 @@
               <div
                 class="input-wrapper flex border-third-500 border-b"
                 ref="educationDiv"
-                @click="showOptionsWindow = true"
+                @click="showOptionsWindow = !showOptionsWindow"
               >
                 <div
                   id="education"
                   ref="inputEducation"
-                  class="select-none min-h-43"
+                  class="select-none min-h-39 flex items-center"
                 >
                   <span
                     v-if="!selectedEducation.length"
                     class="text-third-500 text-base"
                     >Выберите образование</span
                   >
-                  <div v-else>
+
+                  <div v-if="selectedEducation.length">
                     <ul class="flex pb-1 flex-wrap">
                       <li
                         v-for="(item, index) of selectedEducation"
                         :key="index"
-                        class="border border-third-500 rounded-3xl m-0.5 first:mx-0 px-3 py-2 flex flex items-center w-max"
+                        class="border border-third-500 rounded-special50 m-0.5 first:mx-0 px-3 py-2 flex flex items-center w-max"
                       >
                         <div class="font-medium text-xs">{{ item }}</div>
                         <img
@@ -78,34 +89,32 @@
                     </ul>
                   </div>
                 </div>
-                <div
-                  @click="resetEducation"
-                  class="cursor-pointer text-second-500 flex"
-                ></div>
               </div>
               <div class="Educations_Options relative">
-                <ul
-                  v-if="showOptionsWindow"
-                  ref="dropdown"
-                  class="Dropdown absolute top-1 border rounded-md py-2.5 px-4 shadow-special bg-white flex flex-col w-full z-10"
-                >
-                  <li
-                    v-for="(item, index) in educationOptions"
-                    :key="index"
-                    class="DropdownElement duration-200 rounded-special50 select-none"
-                    :class="{
-                      'text-third-500': selectedEducation.includes(item),
-                      'hover:bg-light-blue cursor-pointer': !selectedEducation.includes(
-                        item
-                      ),
-                    }"
-                    @click="selectEducation(index)"
+                <transition name="fade">
+                  <ul
+                    v-if="showOptionsWindow"
+                    ref="dropdown"
+                    class="Dropdown absolute top-1 border rounded-md py-2.5 px-4 shadow-special bg-white flex flex-col w-full z-10"
                   >
-                    <div class="px-3.5 py-1 text-basexl">
-                      {{ item }}
-                    </div>
-                  </li>
-                </ul>
+                    <li
+                      v-for="(item, index) in educationOptions"
+                      :key="index"
+                      class="DropdownElement duration-200 rounded-special50 select-none"
+                      :class="{
+                        'text-third-500': selectedEducation.includes(item),
+                        'hover:bg-light-blue cursor-pointer': !selectedEducation.includes(
+                          item
+                        ),
+                      }"
+                      @click="selectEducation(index)"
+                    >
+                      <div class="px-3.5 py-1 text-basexl">
+                        {{ item }}
+                      </div>
+                    </li>
+                  </ul>
+                </transition>
               </div>
             </div>
           </div>
@@ -117,25 +126,41 @@
           </div>
         </div>
 
-        <div class="row flex flex-wrap px-7 mb-7">
+        <div class="row w-full px-7 hidden md:block mb-7">
+          <transition name="fade">
+            <div
+              v-if="errors.length"
+              class="errors flex text-second-500 mt-3 text-xxs flex items-center"
+            >
+              <img
+                src="@/assets/svgs/attention.svg"
+                alt="#"
+                class="mr-1 h-3.5 w-3.5"
+              />
+              Необходимо ввести ФИО
+            </div>
+          </transition>
+        </div>
+
+        <div class="row flex flex-wrap px-5 md:px-7 mb-7">
           <div
             class="sex flex cursor-pointer mr-7 w-full md:w-auto mb-7 md:mb-0"
           >
             <div
-              class="border border-iron-500 border-l-1 border-t-1 border-b-1 rounded-l-special50 py-2 px-4 font-bold text-xs"
+              class="border border-iron-500 border-l-1 border-t-1 border-b-1 rounded-l-special50 py-2 px-4 font-medium text-xs"
               :class="{
-                'text-main-500': sex === 'male',
-                'bg-light-gray': sex !== 'male',
+                'text-main-500': sex !== 'male',
+                'bg-light-gray': sex === 'male',
               }"
               @click="setSex('male')"
             >
               Мужчина
             </div>
             <div
-              class="border border-iron-500 border-r-1 border-t-1 border-b-1 rounded-r-special50 py-2 px-4 font-bold text-xs"
+              class="border border-iron-500 border-r-1 border-t-1 border-b-1 rounded-r-special50 py-2 px-4 font-medium text-xs"
               :class="{
-                'text-main-500': sex === 'female',
-                'bg-light-gray': sex !== 'female',
+                'text-main-500': sex !== 'female',
+                'bg-light-gray': sex === 'female',
               }"
               @click="setSex('female')"
             >
@@ -170,7 +195,7 @@
           </div>
         </div>
 
-        <div class="row hidden md:flex px-7 mb-7">
+        <div class="row hidden md:flex px-5 md:px-7 mb-7">
           <button
             class="focus:outline-none border py-2 px-8 rounded-full text-base font-medium active:bg-third-100 duration-200 focus:outline-none select-none"
             @click="resetForm"
@@ -185,6 +210,19 @@
             Сохранить
           </button>
         </div>
+
+        <transition name="fade">
+          <div v-if="showModal" class="px-5 md:px-7">
+            <div
+              class="modal-container bg-granny-apple w-full md:w-max px-9 py-1.3 rounded-md shadow-special"
+            >
+              <div class="flex">
+                <img src="@/assets/svgs/green-flag.svg" alt="#" class="mr-3" />
+                <div class="text-small">Данные успешно сохранены</div>
+              </div>
+            </div>
+          </div>
+        </transition>
       </div>
 
       <div class="flex md:hidden h-9 border-t border-iron-500">
@@ -216,6 +254,7 @@ export default {
     education: [],
     errors: [],
     showOptionsWindow: false,
+    showModal: false,
     isReadyToWorkFullDay: false,
     isRemoteWork: false,
     isReadyToTransfer: false,
@@ -253,13 +292,11 @@ export default {
       this.errors = []
       !this.fio
         ? this.errors.push('Необходимо ввести ФИО')
-        : console.log('check is good')
+        : ((this.showModal = true),
+          setTimeout(() => (this.showModal = false), 3000))
     },
     resetFio() {
       this.fio = ''
-    },
-    resetEducation() {
-      this.education = []
     },
     selectEducation(index) {
       if (!this.selectedEducation.includes(this.educationOptions[index])) {
@@ -311,5 +348,25 @@ export default {
 .workCheckBox:checked + label::before {
   @apply border-main-500 bg-main-500;
   background-image: url('~@/assets/svgs/flag.svg');
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
+}
+
+.error-enter-active,
+.error-leave-active {
+  transition: opacity 0.5s ease;
+}
+
+.error-enter-from,
+.error-leave-to {
+  opacity: 0;
 }
 </style>
